@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Text.RegularExpressions;
 using static MyApp.Program;
 
@@ -156,6 +157,25 @@ namespace MyApp
 
         }
 
+        //чтение данных из файла
+        static List<Student> ReadFileLine(string file)
+        {
+            List <Student> student= new List<Student>();
+            using (StreamReader reader = new StreamReader(File.Open(file, FileMode.Open)))
+            {
+                while (reader.Peek() > -1)
+                {
+                    string FIO = reader.ReadLine();
+                    string Special = reader.ReadLine();
+                    string Group = reader.ReadLine();
+                    int Otmetka1 = int.Parse(reader.ReadLine());
+                    int Otmetka2 = int.Parse(reader.ReadLine());
+                    int Otmetka3 = int.Parse(reader.ReadLine());
+                    student.Add(new Student(FIO, Special, Group, Otmetka1, Otmetka2, Otmetka3));
+                }
+            }
+            return student;
+        }
 
 
 
@@ -166,41 +186,47 @@ namespace MyApp
             Console.Write("Введите имя бинарного файла для хранения данных о студентах: ");
             string nameFile = Console.ReadLine();
 
-            var count = InputCountStu();
+            //чтение данных из файла
+            List<Student> student = ReadFileLine(nameFile);
+            PrintStudent(student);
 
-            List<Student> students =AddStudent(count);
+            //запись и чтение из файла
+             var count = InputCountStu();
 
-            WriteFile(nameFile, students);
+             List<Student> students =AddStudent(count);
 
-            List<Student> student1 = ReadFile(nameFile);
+             WriteFile(nameFile, students);
 
-            Console.WriteLine(" ");
-            Console.WriteLine("Информация, хранящаяся в файле: ");
-            PrintStudent(student1);
+             List<Student> student1 = ReadFile(nameFile);
 
-            Console.WriteLine(" ");
-            Console.WriteLine("Информация, хранящаяся в файле после удаления отличников: ");
-            List<Student> student2 = DeleteStudent(students);
-            PrintStudent(student2);
-
-            Console.WriteLine(" ");
-            Console.Write("Введите фамилию, после которой планируется добавить новую запись: ");
-            string name= Console.ReadLine();
-            int counts = 0;
-
-            foreach(Student student in student2)
-            {
-                if (student.FIO == name) { counts++; }
-            }
-
-            if (counts > 0)
-            {
-                List<Student> student3 = AddNewStudent(student2, name);
-                PrintStudent(student3);
-            }
-            else { Console.WriteLine("Такой фамилии в списке нет!!!"); }
+             Console.WriteLine(" ");
+             Console.WriteLine("Информация, хранящаяся в файле: ");
+             PrintStudent(student1);
 
 
+             Console.WriteLine(" ");
+             Console.WriteLine("Информация, хранящаяся в файле после удаления отличников: ");
+             List<Student> student2 = DeleteStudent(students);
+             PrintStudent(student2);
+
+             Console.WriteLine(" ");
+             Console.Write("Введите фамилию, после которой планируется добавить новую запись: ");
+             string name= Console.ReadLine();
+             int counts = 0;
+
+             foreach(Student studentnew in student2)
+             {
+                 if (studentnew.FIO == name) { counts++; }
+             }
+
+             if (counts > 0)
+             {
+                 List<Student> student3 = AddNewStudent(student2, name);
+                 PrintStudent(student3);
+             }
+             else { Console.WriteLine("Такой фамилии в списке нет!!!"); }
+
+             
 
         }
     }
